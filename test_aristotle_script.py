@@ -2,6 +2,7 @@ import streamlit as st
 from openai import OpenAI
 from dotenv import load_dotenv
 import os
+from prompt import ARISTOTLE_PROMPT
 
 # Load environment variables from .env file
 load_dotenv()
@@ -13,7 +14,7 @@ client = OpenAI(api_key=os.getenv('OPENAI_API_KEY'))
 def get_aristotle_response(messages):
     try:
         chat_completion = client.chat.completions.create(
-            model="gpt-4o", # possible change to gpt-4o or gpt-3.5-turbo
+            model="gpt-3.5-turbo",
             messages=messages,
             max_tokens=650,
             temperature=1.5,
@@ -37,41 +38,11 @@ def app():
         st.session_state.messages = [
             {
                 "role": "system",
-                "content": (
-                    "Ważne! Będziesz mówić wyłącznie po polsku!"
-                    "Jesteś Arystotelesem, wielkim filozofem i mistrzem logiki."  
-                    "Zawsze rozpoczynaj rozmowę od: 'Witaj. Jestem Arystoteles. Porozmawiajmy o sylogizmach i wnioskowaniu.'"
-                    
-                    "Zacznij rozmowę, zadając użytkownikowi łącznie 6 pytań dotyczących sylogizmów lub stwierdzeń logicznych w kolejności od średnio zaawansowanych do bardzo trudnych. Przed zadaniem każdego kolejnego pytania, zawsze czekaj na odpowiedź użytkownika. Pytaj 'Co wynika z tych przesłanek?' lub 'Jaki jest logiczny wniosek?'"
-                    
-                    "Po ostatniej odpowiedzi wyjaśnij po krótce, dlaczego dana odpowiedź jest poprawna lub niepoprawna w odniesieniu do przesłanek."
-                    
-                    "Następnie wystawisz jedną, końcową ocenę za całe ćwiczenie w skali od 2 do 6."
-                    
-                    "Udziel również wskazówek, co użytkownik powinien poprawić, aby doskonalić swoje umiejętności logicznego myślenia."
-                    
-                    "Celem jest pomoc użytkownikowi w staniu się mistrzem logiki."
-                    "Po zakończeniu cyklu, rozpocznij od nowa."
-                    "Pamiętaj, mów wyłącznie po polsku!"
-                    
-                    "Oto przykłady interakcji:"
-                    
-                    "Przykład 1:"
-                    "Arystoteles: Witaj. Jestem Arystoteles, mistrz logiki. Porozmawiajmy o sylogizmach i wnioskowaniu."
-                    "Arystoteles: Wszystkie ptaki latają. Wróbel jest ptakiem. Co wynika z tych przesłanek?" 
-                    "Użytkownik: Wróbel lata."
-                    "Arystoteles: Dziękuję za odpowiedź, teraz kolejne zadanie."
-                    
-                    "Przykład 2:"
-                    "Arystoteles: Żadne zwierzę nie jest nieśmiertelne. Wszystkie rośliny są nieśmiertelne. Jaki jest logiczny wniosek?"
-                    "Użytkownik: Żadna roślina nie jest zwierzęciem."
-                    "Arystoteles: Dziękuję za odpowiedź, przejdźmy dalej."
-                    
-                    "Przykład 3:" 
-                    "Arystoteles: Jeśli pada deszcz, to ziemia jest mokra. Ziemia jest mokra. Co wynika z tych przesłanek?"
-                    "Użytkownik: Padał deszcz."
-                    "Arystoteles: Dziękuję za odpowiedź, przejdźmy do czwartego pytania."
-                )
+                "content": "Witaj. Jestem Arystoteles. Czy jestes gotów porozmawiac o sylogizmach i wnioskowaniu?"
+            },
+            {
+                "role": "system",
+                "content": ARISTOTLE_PROMPT
             }
         ]
     
@@ -89,8 +60,12 @@ def app():
         st.title("Rozmowa z Arystotelesem")
         st.markdown("<small>JGB 2024 index: 51670 Logika</small>", unsafe_allow_html=True)
 
+    # Display the initial message from Aristotle
+    if len(st.session_state.messages) == 2:
+        st.write ("Witaj. Jestem Arystoteles. Czy jestes gotów porozmawiac o sylogizmach i wnioskowaniu?")
+
     # Display conversation history
-    for message in st.session_state.messages[1:]:
+    for message in st.session_state.messages[2:]:
         if message["role"] == "user":
             st.write("Ty: " + message["content"])
         else:

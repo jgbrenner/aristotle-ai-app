@@ -16,7 +16,7 @@ def get_aristotle_response(messages):
         chat_completion = client.chat.completions.create(
             model="gpt-3.5-turbo",
             messages=messages,
-            max_tokens=350,
+            max_tokens=650,
             temperature=1.5,
             top_p=0.5,
         )
@@ -38,6 +38,10 @@ def app():
         st.session_state.messages = [
             {
                 "role": "system",
+                "content": "Witaj. Jestem Arystoteles. Czy jestes gotów porozmawiac o sylogizmach i wnioskowaniu?"
+            },
+            {
+                "role": "system",
                 "content": ARISTOTLE_PROMPT
             }
         ]
@@ -56,8 +60,12 @@ def app():
         st.title("Rozmowa z Arystotelesem")
         st.markdown("<small>JGB 2024 index: 51670 Logika</small>", unsafe_allow_html=True)
 
+    # Display the initial message from Aristotle
+    if len(st.session_state.messages) == 2:
+        st.write ("Witaj. Jestem Arystoteles. Czy jestes gotów porozmawiac o sylogizmach i wnioskowaniu?")
+
     # Display conversation history
-    for message in st.session_state.messages[1:]:
+    for message in st.session_state.messages[2:]:
         if message["role"] == "user":
             st.write("Ty: " + message["content"])
         else:
