@@ -14,7 +14,7 @@ client = OpenAI(api_key=os.getenv('OPENAI_API_KEY'))
 def get_aristotle_response(messages):
     try:
         chat_completion = client.chat.completions.create(
-            model="gpt-4o",
+            model="gpt-3.5-turbo",
             messages=messages,
             max_tokens=850,
             temperature=1.5,
